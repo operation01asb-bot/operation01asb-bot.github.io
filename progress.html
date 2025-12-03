@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Progress</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="sidebar dark">
+    <h3>Onboarding Portal</h3>
+    <ul>
+        <li><a href="dashboard.html">Welcome</a></li>
+        <li><a href="checklist.html">Checklist</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li class="active"><a href="progress.html">Progress</a></li>
+        <li id="adminOnly" style="display:none;"><a href="admin.html">Admin Panel</a></li>
+        <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+</div>
+
+<div class="content-area">
+    <h1>Your Onboarding Progress</h1>
+
+    <div class="progress-section">
+        <div class="progress-bar-big">
+            <div id="progressFill"></div>
+        </div>
+
+        <p id="progressText">Loading...</p>
+    </div>
+</div>
+
+<script type="module">
+import { auth, db } from "./firebase.js";
+import { 
+    onAuthStateChanged, 
+    signOut 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+    doc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) window.location.href = "index.html";
+
+    const userSnap = await getDoc(doc(db, "users", user.uid));
+    const completed = userSnap.data().completedTasks || [];
+
+    const checklistSnap = await getDoc(doc(db, "checklist", "default"));
+    const tasks = checklistSnap.data().tasks || [];
+
+    let percent = tasks.length > 0 
+        ? Math.round((completed.length / tasks.length) * 100) 
+        : 0;
+
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressText").innerText = percent + "% Completed";
+
+    if (userSnap.data().role === "admin") {
+        document.getElementById("adminOnly").style.display = "block";
+    }
+});
+
+window.logout = function () {
+    signOut(auth);
+};
+</script>
+
+</body>
+</html>

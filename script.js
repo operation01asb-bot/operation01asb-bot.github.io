@@ -1,61 +1,52 @@
-function login() {
-    const name = document.getElementById("username").value;
+import { auth, db, createUserProfile } from "./firebase.js";
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword,
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    if (name.trim() === "") {
-        alert("Please enter your name.");
-        return;
+// Show Register Box
+function showRegister() {
+    document.querySelector(".login-container").style.display = "none";
+    document.querySelector("#registerBox").style.display = "block";
+}
+
+// Hide Register Box
+function hideRegister() {
+    document.querySelector(".login-container").style.display = "block";
+    document.querySelector("#registerBox").style.display = "none";
+}
+
+window.showRegister = showRegister;
+window.hideRegister = hideRegister;
+
+window.login = function () {
+    const email = document.getElementById("email").value;
+    const pw = document.getElementById("password").value;
+
+    signInWithEmailAndPassword(auth, email, pw)
+    .then(() => {
+        window.location.href = "dashboard.html";
+    })
+    .catch(e => alert("Login failed: " + e.message));
+};
+
+window.register = function () {
+    const email = document.getElementById("regEmail").value;
+    const pw = document.getElementById("regPassword").value;
+
+    createUserWithEmailAndPassword(auth, email, pw)
+    .then(async (cred) => {
+        await createUserProfile(cred.user.uid, email);
+        alert("Account created. You can now log in.");
+        hideRegister();
+    })
+    .catch(e => alert("Registration failed: " + e.message));
+};
+
+// Auto redirect logged-in users
+onAuthStateChanged(auth, (user) => {
+    if (user && window.location.pathname.endsWith("index.html")) {
+        window.location.href = "dashboard.html";
     }
-
-    localStorage.setItem("employeeName", name);
-    document.getElementById("userNameDisplay").innerText = name;
-
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("portalPage").style.display = "block";
-
-    loadProgress();
-}
-
-function logout() {
-    localStorage.removeItem("employeeName");
-    localStorage.removeItem("onboardProgress");
-    location.reload();
-}
-
-function updateProgress() {
-    const checkboxes = document.querySelectorAll("input[type='checkbox']");
-    let completed = 0;
-
-    checkboxes.forEach(c => {
-        if (c.checked) completed++;
-    });
-
-    const total = checkboxes.length;
-    const progress = Math.round((completed / total) * 100);
-
-    document.getElementById("progressFill").style.width = progress + "%";
-
-    localStorage.setItem("onboardProgress", progress);
-}
-
-function loadProgress() {
-    const savedName = localStorage.getItem("employeeName");
-    const savedProgress = localStorage.getItem("onboardProgress");
-
-    if (savedName) {
-        document.getElementById("userNameDisplay").innerText = savedName;
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("portalPage").style.display = "block";
-    }
-
-    if (savedProgress) {
-        const checkboxes = document.querySelectorAll("input[type='checkbox']");
-        const totalBoxes = checkboxes.length;
-        const countToCheck = Math.round((savedProgress / 100) * totalBoxes);
-
-        for (let i = 0; i < countToCheck; i++) {
-            checkboxes[i].checked = true;
-        }
-
-        document.getElementById("progressFill").style.width = savedProgress + "%";
-    }
-}
+});
