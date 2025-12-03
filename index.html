@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onboarding Portal Login</title>
+    <title>Onboarding Portal</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<div class="login-container">
-    <h2>Employee Login</h2>
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button onclick="login()">Login</button>
-
-    <p class="small-text">Don't have an account?  
-        <a href="#" onclick="showRegister()">Register</a>
-    </p>
+<div class="sidebar dark">
+    <h3>Onboarding Portal</h3>
+    <ul>
+        <li class="active"><a href="index.html">Welcome</a></li>
+        <li><a href="checklist.html">Checklist</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li><a href="progress.html">Progress</a></li>
+        <li><a href="admin.html">Admin Panel</a></li>
+    </ul>
 </div>
 
-<!-- Register Box -->
-<div class="register-container" id="registerBox" style="display:none;">
-    <h2>Create Account</h2>
-    <input id="regEmail" type="email" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
+<div class="content-area">
+    <h1>Welcome to the Onboarding Portal 🎉</h1>
+    <p>This platform guides you through your onboarding journey.</p>
 
-    <button onclick="register()">Register</button>
+    <div class="card-grid">
+        <div class="card">
+            <h3>Checklist</h3>
+            <p>13-week onboarding tasks.</p>
+            <a class="card-btn" href="checklist.html">Open</a>
+        </div>
 
-    <p class="small-text">
-        Already have an account?  
-        <a href="#" onclick="hideRegister()">Login</a>
-    </p>
+        <div class="card">
+            <h3>Resources</h3>
+            <p>Policies, forms, manuals.</p>
+            <a class="card-btn" href="resources.html">Open</a>
+        </div>
+
+        <div class="card">
+            <h3>Progress</h3>
+            <p>Track your completion level.</p>
+            <a class="card-btn" href="progress.html">Open</a>
+        </div>
+    </div>
 </div>
-
-<script type="module" src="firebase.js"></script>
-<script src="script.js"></script>
 
 </body>
 </html>
-
-<script type="module" src="autoAdmin.js"></script>
-
-<script type="module" src="firebase.js"></script>
-<script src="script.js"></script>
-<script type="module" src="autoAdmin.js"></script>

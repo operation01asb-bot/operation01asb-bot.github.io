@@ -1,52 +1,19 @@
-import { auth, db, createUserProfile } from "./firebase.js";
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword,
-    onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-// Show Register Box
-function showRegister() {
-    document.querySelector(".login-container").style.display = "none";
-    document.querySelector("#registerBox").style.display = "block";
+// Load tasks from localStorage
+function getTasks() {
+    return JSON.parse(localStorage.getItem("onboardingTasks") || "[]");
 }
 
-// Hide Register Box
-function hideRegister() {
-    document.querySelector(".login-container").style.display = "block";
-    document.querySelector("#registerBox").style.display = "none";
+// Save tasks to localStorage
+function saveTasks(tasks) {
+    localStorage.setItem("onboardingTasks", JSON.stringify(tasks));
 }
 
-window.showRegister = showRegister;
-window.hideRegister = hideRegister;
+// Load completed tasks
+function getCompleted() {
+    return JSON.parse(localStorage.getItem("completedTasks") || "[]");
+}
 
-window.login = function () {
-    const email = document.getElementById("email").value;
-    const pw = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, pw)
-    .then(() => {
-        window.location.href = "dashboard.html";
-    })
-    .catch(e => alert("Login failed: " + e.message));
-};
-
-window.register = function () {
-    const email = document.getElementById("regEmail").value;
-    const pw = document.getElementById("regPassword").value;
-
-    createUserWithEmailAndPassword(auth, email, pw)
-    .then(async (cred) => {
-        await createUserProfile(cred.user.uid, email);
-        alert("Account created. You can now log in.");
-        hideRegister();
-    })
-    .catch(e => alert("Registration failed: " + e.message));
-};
-
-// Auto redirect logged-in users
-onAuthStateChanged(auth, (user) => {
-    if (user && window.location.pathname.endsWith("index.html")) {
-        window.location.href = "dashboard.html";
-    }
-});
+// Save completed tasks
+function saveCompleted(list) {
+    localStorage.setItem("completedTasks", JSON.stringify(list));
+}

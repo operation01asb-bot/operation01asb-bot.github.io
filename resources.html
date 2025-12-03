@@ -1,68 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
     <title>Resources</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
 <div class="sidebar dark">
     <h3>Onboarding Portal</h3>
     <ul>
-        <li><a href="dashboard.html">Welcome</a></li>
+        <li><a href="index.html">Welcome</a></li>
         <li><a href="checklist.html">Checklist</a></li>
         <li class="active"><a href="resources.html">Resources</a></li>
         <li><a href="progress.html">Progress</a></li>
-        <li id="adminOnly" style="display:none;"><a href="admin.html">Admin Panel</a></li>
-        <li><a href="#" onclick="logout()">Logout</a></li>
+        <li><a href="admin.html">Admin Panel</a></li>
     </ul>
 </div>
 
 <div class="content-area">
     <h1>Company Resources</h1>
-    <p>Policies, manuals, and important links.</p>
 
-    <ul id="resourceList" class="resource-box">
-        <!-- Dynamic -->
+    <ul>
+        <li><a href="#" target="_blank">Employee Handbook</a></li>
+        <li><a href="#" target="_blank">Company Policies</a></li>
+        <li><a href="#" target="_blank">Safety Manual</a></li>
     </ul>
 </div>
-
-<script type="module">
-import { auth, db } from "./firebase.js";
-import { 
-    onAuthStateChanged, 
-    signOut 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-import {
-    collection, getDocs
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-onAuthStateChanged(auth, async (user) => {
-    if (!user) window.location.href = "index.html";
-
-    loadResources();
-});
-
-async function loadResources() {
-    const querySnap = await getDocs(collection(db, "resources"));
-    let html = "";
-
-    querySnap.forEach(doc => {
-        html += `
-        <li>
-            <a href="${doc.data().url}" target="_blank">${doc.data().name}</a>
-        </li>`;
-    });
-
-    document.getElementById("resourceList").innerHTML = html;
-}
-
-window.logout = function () {
-    signOut(auth);
-};
-</script>
 
 </body>
 </html>

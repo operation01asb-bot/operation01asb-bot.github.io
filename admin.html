@@ -1,93 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
     <title>Admin Panel</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
 </head>
+
 <body>
+
+<script>
+const password = "adminadmin";
+const input = prompt("Enter Admin Panel Password:");
+
+if (input !== password) {
+    alert("Access denied.");
+    window.location.href = "index.html";
+}
+</script>
 
 <div class="sidebar dark">
     <h3>Onboarding Portal</h3>
     <ul>
-        <li><a href="dashboard.html">Welcome</a></li>
+        <li><a href="index.html">Welcome</a></li>
         <li><a href="checklist.html">Checklist</a></li>
         <li><a href="resources.html">Resources</a></li>
         <li><a href="progress.html">Progress</a></li>
         <li class="active"><a href="admin.html">Admin Panel</a></li>
-        <li><a href="#" onclick="logout()">Logout</a></li>
     </ul>
 </div>
 
 <div class="content-area">
     <h1>Admin Panel</h1>
 
-    <h3>Add Checklist Task</h3>
+    <h3>Add Task</h3>
     <input id="newTask" placeholder="Enter task">
-    <button onclick="addTask()">Add Task</button>
+    <button onclick="addTask()">Add</button>
 
-    <h3>Add Resource Link</h3>
-    <input id="resName" placeholder="Resource Name">
-    <input id="resURL" placeholder="URL">
-    <button onclick="addResource()">Add Resource</button>
+    <h3>Current Tasks</h3>
+    <ul id="adminTaskList"></ul>
 </div>
 
-<script type="module">
-import { auth, db } from "./firebase.js";
-import { 
-    onAuthStateChanged, 
-    signOut 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+<script>
+let tasks = getTasks();
 
-import {
-    doc, getDoc, setDoc, updateDoc, collection, addDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-let isAdmin = false;
-
-onAuthStateChanged(auth, async (user) => {
-    if (!user) window.location.href = "index.html";
-
-    const snap = await getDoc(doc(db, "users", user.uid));
-    if (snap.data().role !== "admin") {
-        alert("Access denied");
-        window.location.href = "dashboard.html";
-    }
-
-    isAdmin = true;
-});
-
-window.addTask = async function () {
-    if (!isAdmin) return;
-
-    const t = document.getElementById("newTask").value;
-    const ref = doc(db, "checklist", "default");
-    const snap = await getDoc(ref);
-
-    let tasks = snap.exists() ? snap.data().tasks : [];
-    tasks.push(t);
-
-    await setDoc(ref, { tasks: tasks });
-    alert("Task added");
-};
-
-window.addResource = async function () {
-    if (!isAdmin) return;
-
-    const name = document.getElementById("resName").value;
-    const url = document.getElementById("resURL").value;
-
-    await addDoc(collection(db, "resources"), {
-        name: name,
-        url: url
+function renderAdminList() {
+    let html = "";
+    tasks.forEach((t, i) => {
+        html += `<li>${t}</li>`;
     });
+    document.getElementById("adminTaskList").innerHTML = html;
+}
 
-    alert("Resource added.");
-};
+function addTask() {
+    const val = document.getElementById("newTask").value;
+    if (!val) return;
 
-window.logout = function () {
-    signOut(auth);
-};
+    tasks.push(val);
+    saveTasks(tasks);
+    renderAdminList();
+    alert("Task added.");
+}
+
+renderAdminList();
 </script>
 
 </body>

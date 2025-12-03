@@ -1,71 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
     <title>Progress</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
 </head>
+
 <body>
 
 <div class="sidebar dark">
     <h3>Onboarding Portal</h3>
     <ul>
-        <li><a href="dashboard.html">Welcome</a></li>
+        <li><a href="index.html">Welcome</a></li>
         <li><a href="checklist.html">Checklist</a></li>
         <li><a href="resources.html">Resources</a></li>
         <li class="active"><a href="progress.html">Progress</a></li>
-        <li id="adminOnly" style="display:none;"><a href="admin.html">Admin Panel</a></li>
-        <li><a href="#" onclick="logout()">Logout</a></li>
+        <li><a href="admin.html">Admin Panel</a></li>
     </ul>
 </div>
 
 <div class="content-area">
-    <h1>Your Onboarding Progress</h1>
+    <h1>Onboarding Progress</h1>
 
-    <div class="progress-section">
-        <div class="progress-bar-big">
-            <div id="progressFill"></div>
-        </div>
-
-        <p id="progressText">Loading...</p>
+    <div class="progress-bar-big">
+        <div id="progressFill"></div>
     </div>
+
+    <h3 id="progressText"></h3>
 </div>
 
-<script type="module">
-import { auth, db } from "./firebase.js";
-import { 
-    onAuthStateChanged, 
-    signOut 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+<script>
+const tasks = getTasks();
+const completed = getCompleted();
 
-import {
-    doc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+const percent = tasks.length === 0 
+    ? 0 
+    : Math.round((completed.length / tasks.length) * 100);
 
-onAuthStateChanged(auth, async (user) => {
-    if (!user) window.location.href = "index.html";
-
-    const userSnap = await getDoc(doc(db, "users", user.uid));
-    const completed = userSnap.data().completedTasks || [];
-
-    const checklistSnap = await getDoc(doc(db, "checklist", "default"));
-    const tasks = checklistSnap.data().tasks || [];
-
-    let percent = tasks.length > 0 
-        ? Math.round((completed.length / tasks.length) * 100) 
-        : 0;
-
-    document.getElementById("progressFill").style.width = percent + "%";
-    document.getElementById("progressText").innerText = percent + "% Completed";
-
-    if (userSnap.data().role === "admin") {
-        document.getElementById("adminOnly").style.display = "block";
-    }
-});
-
-window.logout = function () {
-    signOut(auth);
-};
+document.getElementById("progressFill").style.width = percent + "%";
+document.getElementById("progressText").innerText = percent + "% Completed";
 </script>
 
 </body>
