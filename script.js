@@ -1,5 +1,6 @@
 function login() {
     const name = document.getElementById("username").value;
+
     if (name.trim() === "") {
         alert("Please enter your name.");
         return;
@@ -16,26 +17,29 @@ function login() {
 
 function logout() {
     localStorage.removeItem("employeeName");
+    localStorage.removeItem("onboardProgress");
     location.reload();
 }
 
 function updateProgress() {
-    const checkboxes = document.querySelectorAll("#checklist input");
+    const checkboxes = document.querySelectorAll("input[type='checkbox']");
     let completed = 0;
 
     checkboxes.forEach(c => {
         if (c.checked) completed++;
     });
 
-    const progress = Math.round((completed / checkboxes.length) * 100);
+    const total = checkboxes.length;
+    const progress = Math.round((completed / total) * 100);
+
     document.getElementById("progressFill").style.width = progress + "%";
 
-    localStorage.setItem("progress", progress);
+    localStorage.setItem("onboardProgress", progress);
 }
 
 function loadProgress() {
     const savedName = localStorage.getItem("employeeName");
-    const savedProgress = localStorage.getItem("progress");
+    const savedProgress = localStorage.getItem("onboardProgress");
 
     if (savedName) {
         document.getElementById("userNameDisplay").innerText = savedName;
@@ -44,12 +48,14 @@ function loadProgress() {
     }
 
     if (savedProgress) {
-        document.getElementById("progressFill").style.width = savedProgress + "%";
-        const checkboxes = document.querySelectorAll("#checklist input");
-        let completeCount = Math.round((savedProgress / 100) * checkboxes.length);
+        const checkboxes = document.querySelectorAll("input[type='checkbox']");
+        const totalBoxes = checkboxes.length;
+        const countToCheck = Math.round((savedProgress / 100) * totalBoxes);
 
-        for (let i = 0; i < completeCount; i++) {
+        for (let i = 0; i < countToCheck; i++) {
             checkboxes[i].checked = true;
         }
+
+        document.getElementById("progressFill").style.width = savedProgress + "%";
     }
 }
