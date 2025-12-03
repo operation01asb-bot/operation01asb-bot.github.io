@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onboarding Portal</title>
+    <title>Onboarding Program Portal</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,26 +12,33 @@
 
     <!-- Login Page -->
     <div id="loginPage">
-        <h2>Employee Login</h2>
+        <h2>Employee Onboarding Login</h2>
         <input id="username" type="text" placeholder="Enter your name">
         <button onclick="login()">Login</button>
     </div>
 
-    <!-- Main Portal -->
+    <!-- Onboarding Portal -->
     <div id="portalPage" style="display:none;">
         <h2>Welcome, <span id="userNameDisplay"></span>!</h2>
-        <p>Your Onboarding Progress</p>
+        <p>Below is your 13-Week Onboarding Program</p>
 
         <div class="progress-bar">
             <div id="progressFill"></div>
         </div>
 
-        <h3>Week 1 Checklist</h3>
-        <ul id="checklist">
-            <li><input type="checkbox" onclick="updateProgress()"> Complete HR Induction</li>
-            <li><input type="checkbox" onclick="updateProgress()"> Submit Personal Details Form</li>
-            <li><input type="checkbox" onclick="updateProgress()"> Meet Department Manager</li>
-            <li><input type="checkbox" onclick="updateProgress()"> Set Up Workstation</li>
+        <h3>WEEK 1 – Orientation & HR Setup</h3>
+        <ul id="week1list">
+            <li><input type="checkbox" onclick="updateProgress()"> HR Briefing</li>
+            <li><input type="checkbox" onclick="updateProgress()"> Submit Personal Details</li>
+            <li><input type="checkbox" onclick="updateProgress()"> Office Tour</li>
+            <li><input type="checkbox" onclick="updateProgress()"> Meet Supervisor</li>
+        </ul>
+
+        <h3>WEEK 2 – Job Familiarisation</h3>
+        <ul id="week2list">
+            <li><input type="checkbox" onclick="updateProgress()"> Understand Department Roles</li>
+            <li><input type="checkbox" onclick="updateProgress()"> Receive Job Tools</li>
+            <li><input type="checkbox" onclick="updateProgress()"> Learn Workflow</li>
         </ul>
 
         <button class="logoutBtn" onclick="logout()">Logout</button>
